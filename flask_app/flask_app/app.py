@@ -3,19 +3,11 @@
 import logging
 import sys
 
-from flask import Flask, render_template
+from flask import Flask
 
 from flask_app import commands
-from flask_app.extensions import (
-    bcrypt,
-    cache,
-    csrf_protect,
-    db,
-    debug_toolbar,
-    flask_static_digest,
-    login_manager,
-    migrate,
-)
+from flask_app.api import v1
+from flask_app.extensions import bcrypt, cache, flask_static_digest
 
 
 def create_app(config_object="flask_app.settings"):
@@ -27,7 +19,6 @@ def create_app(config_object="flask_app.settings"):
     app.config.from_object(config_object)
     register_extensions(app)
     register_blueprints(app)
-    register_errorhandlers(app)
     register_shellcontext(app)
     register_commands(app)
     configure_logger(app)
@@ -38,33 +29,13 @@ def register_extensions(app):
     """Register Flask extensions."""
     bcrypt.init_app(app)
     cache.init_app(app)
-    db.init_app(app)
-    csrf_protect.init_app(app)
-    login_manager.init_app(app)
-    debug_toolbar.init_app(app)
-    migrate.init_app(app, db)
     flask_static_digest.init_app(app)
     return None
 
 
 def register_blueprints(app):
     """Register Flask blueprints."""
-    app.register_blueprint(public.views.blueprint)
-    app.register_blueprint(user.views.blueprint)
-    return None
-
-
-def register_errorhandlers(app):
-    """Register error handlers."""
-
-    def render_error(error):
-        """Render error template."""
-        # If a HTTPException, pull the `code` attribute; default to 500
-        error_code = getattr(error, "code", 500)
-        return render_template(f"{error_code}.html"), error_code
-
-    for errcode in [401, 404, 500]:
-        app.errorhandler(errcode)(render_error)
+    app.register_blueprint(v1.v1_bp)
     return None
 
 
@@ -73,7 +44,7 @@ def register_shellcontext(app):
 
     def shell_context():
         """Shell context objects."""
-        return {"db": db, "User": user.models.User}
+        return {}
 
     app.shell_context_processor(shell_context)
 
