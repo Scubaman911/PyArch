@@ -7,5 +7,5 @@ blueprint = Blueprint("user", __name__, url_prefix="/users", static_folder="../s
 
 @blueprint.route("/")
 def members():
-    """List members."""
-    return "stuff"
+    """List users."""
+    return "users"
