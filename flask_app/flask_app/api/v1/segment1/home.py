@@ -1,7 +1,7 @@
 """Public section, including homepage and signup."""
 from flask import Blueprint, current_app
 
-blueprint = Blueprint("public", __name__, static_folder="../static")
+blueprint = Blueprint("route1", __name__, static_folder="../static")
 
 
 @blueprint.route("/", methods=["GET", "POST"])

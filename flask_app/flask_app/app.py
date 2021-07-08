@@ -5,7 +5,7 @@ import sys
 
 from flask import Flask, render_template
 
-from flask_app import commands, public, user
+from flask_app import commands
 from flask_app.extensions import (
     bcrypt,
     cache,
