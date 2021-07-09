@@ -8,6 +8,7 @@ from webtest import TestApp
 
 from flask_app.app import create_app
 
+
 @pytest.fixture
 def app():
     """Create application for the tests."""
