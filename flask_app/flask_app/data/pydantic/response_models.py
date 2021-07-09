@@ -6,6 +6,9 @@ from pydantic import BaseModel
 
 
 class RInfoModel(BaseModel):
-    id: str
+    id: int
     name: str
-    fact: Optional[str]
+    fun_fact: Optional[str]
+
+
+__all__ = ["RInfoModel"]
