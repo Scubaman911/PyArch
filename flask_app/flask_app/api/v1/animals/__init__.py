@@ -1,8 +1,7 @@
 from flask import Blueprint
 
-from . import info, users
+from . import info
 
-seg1_bp = Blueprint("animals", __name__, url_prefix="/animals")
+animals_bp = Blueprint("animals", __name__, url_prefix="/animals")
 
-seg1_bp.register_blueprint(info.blueprint)
-seg1_bp.register_blueprint(users.blueprint)
+animals_bp.register_blueprint(info.blueprint)
