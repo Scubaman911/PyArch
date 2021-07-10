@@ -10,10 +10,12 @@ x-default-volumes: &default_volumes
 
 services:
   spark-notebook:
-    image: jupyter/pyspark-notebook
+    build:
+      context: .
+      dockerfile: Dockerfile_nb
+      target: notebook
     environment:
       JUPYTER_ENABLE_LAB: "yes"
-    command: "start-notebook.sh --NotebookApp.token='' --NotebookApp.password=''"
     ports:
       - "8888:8888"
 
