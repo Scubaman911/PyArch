@@ -9,6 +9,14 @@ x-default-volumes: &default_volumes
     - node-modules:/app/node_modules
 
 services:
+  spark-notebook:
+    image: jupyter/pyspark-notebook
+    environment:
+      JUPYTER_ENABLE_LAB: "yes"
+    command: "start-notebook.sh --NotebookApp.token='' --NotebookApp.password=''"
+    ports:
+      - "8888:8888"
+
   flask-dev:
     build:
       context: .

@@ -44,3 +44,16 @@ RUN pip install --no-cache -r requirements/dev.txt
 EXPOSE 2992
 EXPOSE 5000
 ENTRYPOINT ["/bin/bash", "shell_scripts/dev_entrypoint.sh"]
+
+# ================================= Jupyter-Pyspark ============================
+ARG BASE_CONTAINER=jupyter/pyspark-notebook
+FROM $BASE_CONTAINER AS notebook
+
+RUN useradd -m sid
+RUN chown -R sid:sid /app
+USER sid
+EXPOSE 8888
+# ENTRYPOINT [ "/bin/bash", "shell_scripts/botebook_entrypoint.sh" ]
+
+# RUN pip install pandas numpy matplotlib plotly
+# Switch back to jovyan to avoid accidental container runs as root
