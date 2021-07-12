@@ -1,6 +1,8 @@
 # ================================= Jupyter-Pyspark ============================
 FROM jupyter/pyspark-notebook as notebook
 
+WORKDIR /nb
+
 ENV TINI_VERSION v0.6.0
 ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /usr/bin/tini
 USER root

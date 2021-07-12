@@ -3,25 +3,29 @@ version: "3.6"
 x-build-args: &build_args
   INSTALL_PYTHON_VERSION: 3.9
 
-x-default-volumes: &default_volumes
+x-flask-volumes: &flask_volumes
   volumes:
-    - ./:/app
+    - ./flask_app/:/app
     - node-modules:/app/node_modules
+x-notebook-volumes: &notebook_volumes
+  volumes:
+    - ./ui/notebooks:/nb
 
 services:
   spark-notebook:
     build:
-      context: .
-      dockerfile: Dockerfile_nb
+      context: ./ui
+      dockerfile: Dockerfile
       target: notebook
     environment:
       JUPYTER_ENABLE_LAB: "yes"
     ports:
       - "8888:8888"
+    <<: *notebook_volumes
 
   flask-dev:
     build:
-      context: .
+      context: ./flask_app
       target: development
       args:
         <<: *build_args
@@ -29,11 +33,11 @@ services:
     ports:
       - "5000:5000"
       - "2992:2992"
-    <<: *default_volumes
+    <<: *flask_volumes
 
   flask-prod:
     build:
-      context: .
+      context: ./flask_app
       target: production
       args:
         <<: *build_args
@@ -45,11 +49,11 @@ services:
       FLASK_DEBUG: 0
       LOG_LEVEL: info
       GUNICORN_WORKERS: 4
-    <<: *default_volumes
+    <<: *flask_volumes
 
   manage:
     build:
-      context: .
+      context: ./flask_app
       target: development
       args:
         <<: *build_args
@@ -60,7 +64,7 @@ services:
     image: "flask_app-manage"
     stdin_open: true
     tty: true
-    <<: *default_volumes
+    <<: *flask_volumes
 
 volumes:
   node-modules:
