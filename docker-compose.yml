@@ -8,10 +8,10 @@ x-flask-volumes: &flask_volumes
     - ./flask_app/:/app
 x-notebook-volumes: &notebook_volumes
   volumes:
-    - ./ui/notebooks:/nb
+    - nb_vol:/nb/nb_vol
 
 services:
-  spark-notebook:
+  pyspark-notebook:
     build:
       context: ./ui
       dockerfile: Dockerfile
@@ -64,3 +64,6 @@ services:
     stdin_open: true
     tty: true
     <<: *flask_volumes
+
+volumes:
+  nb_vol:
