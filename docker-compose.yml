@@ -6,7 +6,6 @@ x-build-args: &build_args
 x-flask-volumes: &flask_volumes
   volumes:
     - ./flask_app/:/app
-    - node-modules:/app/node_modules
 x-notebook-volumes: &notebook_volumes
   volumes:
     - ./ui/notebooks:/nb
@@ -65,6 +64,3 @@ services:
     stdin_open: true
     tty: true
     <<: *flask_volumes
-
-volumes:
-  node-modules:
