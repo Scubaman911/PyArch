@@ -6,7 +6,7 @@ import sys
 from flask import Flask
 
 from flask_app import commands
-from flask_app.api import v1
+from flask_app import api
 from flask_app.extensions import bcrypt, cache, flask_static_digest, api_spec
 
 
@@ -36,7 +36,7 @@ def register_extensions(app):
 
 def register_blueprints(app):
     """Register Flask blueprints."""
-    app.register_blueprint(v1.v1_bp)
+    app.register_blueprint(api.api_bp)
     return None
 
 
