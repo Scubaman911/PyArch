@@ -80,9 +80,12 @@ services:
     networks:
       - ${TRAEFIK_PUBLIC_NETWORK?Variable not set}
       - default
+    depends_on:
+      - celeryworker
     env_file:
       - .env
-    command: ["celery", "--broker=amqp://guest:guest@queue:15672/api//", "flower", "--port=5555"] 
+    command: ["celery", "--broker=amqp://guest:guest@queue:5672//", "flower", "--broker_api=http://guest:guest@queue:15672/api//", "--inspect_timeout=10000"]
+    # command: ["celery", "flower", "--broker_api=http://guest:guest@queue:15672/api/", "--port=5555"] 
       # - "--broker_api=http://guest:guest@queue:15672/api//"
       # For the "Broker" tab to work in the flower UI, uncomment the following command argument,
       # and change the queue service's image as well
