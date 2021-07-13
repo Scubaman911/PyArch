@@ -12,7 +12,7 @@ blueprint = Blueprint("info", __name__, url_prefix="/info")
 @blueprint.route("/", methods=["POST"])
 @api_spec.validate(json=QInfoModel, resp=Response(HTTP_200=RInfoModel), tags=["v1"])
 def info():
-    """Get info by animal name...it only knows kangaroo"""
+    """Returns info by animal name...it only knows kangaroo"""
     current_app.logger.info("Hello from the home page!")
     animal = request.json.get("animal")
 
