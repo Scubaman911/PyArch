@@ -7,7 +7,7 @@ from flask import Flask
 
 from flask_app import commands
 from flask_app import api
-from flask_app.extensions import bcrypt, cache, flask_static_digest, api_spec
+from flask_app.extensions import bcrypt, cache, api_spec
 
 
 def create_app(config_object="flask_app.settings"):
@@ -29,7 +29,6 @@ def register_extensions(app):
     """Register Flask extensions."""
     bcrypt.init_app(app)
     cache.init_app(app)
-    flask_static_digest.init_app(app)
     api_spec.register(app)
     return None
 
