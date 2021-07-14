@@ -134,8 +134,6 @@ The file `./scripts/test.sh` has the commands to generate a testing `docker-stac
 
 The tests run with Pytest, modify and add tests to `./backend/app/app/tests/`.
 
-If you use GitLab CI the tests will run automatically.
-
 #### Local tests
 
 Start the stack with this command:
