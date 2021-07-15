@@ -1,3 +1,4 @@
+""" A Very dirty example of querying Neo, not production ready but just intended to prove basic functionality quickly."""
 from fastapi import APIRouter
 from neo4j import GraphDatabase
 import logging
@@ -28,20 +29,20 @@ class NeoData:
     @staticmethod
     def _add_example(tx):
         query = (
-            '''MERGE p = (andy: Person {name:'Andy'})-[:WORKS_AT]->(neo)<-[:WORKS_AT]-(michael: Person {name: 'Michael'})'''
+            '''MERGE p = (andy: Person {name:'Andy'})-[:WORKS_AT]->(j:JOB {name: 'Neo'})<-[:WORKS_AT]-(michael: Person {name: 'Michael'})'''
         )
         result = tx.run(query)
 
     @staticmethod
     def _find_all(tx):
         query = (
-            '''MATCH (n:Person)
-            RETURN n.name AS name
+            '''MATCH (n:Person)-[k:WORKS_AT]->(f)
+            RETURN n.name AS name, f.name as place
             ORDER BY n.name'''
         )
         result = tx.run(query)
         try:
-            return [{"name": row["name"]} for row in result]
+            return [{"name": row["name"], "workplace": row["place"]} for row in result]
         except ServiceUnavailable as exception:
             logging.error("{query} raised an error: \n {exception}".format(
                 query=query, exception=exception))
