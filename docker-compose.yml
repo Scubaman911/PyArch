@@ -1,6 +1,10 @@
-version: "3.3"
-services:
+version: "3.6"
 
+x-notebook-volumes: &notebook_volumes
+  volumes:
+    - ./ui/notebooks:/nb
+
+services:
   proxy:
     image: traefik:v2.2
     networks:
@@ -39,6 +43,7 @@ services:
         # traefik-http set up only to use the middleware to redirect to https
         - traefik.http.middlewares.${STACK_NAME?Variable not set}-https-redirect.redirectscheme.scheme=https
         - traefik.http.middlewares.${STACK_NAME?Variable not set}-https-redirect.redirectscheme.permanent=true
+        - traefik.frontend.headers.contentTypeNosniff=false
         # Handle host with and without "www" to redirect to only one of them
         # Uses environment variable DOMAIN
         # To disable www redirection remove the Host() you want to discard, here and
@@ -141,8 +146,32 @@ services:
       args:
         INSTALL_DEV: ${INSTALL_DEV-false}
 
+  pyspark-notebook:
+    build:
+      context: ./ui
+      dockerfile: Dockerfile
+      target: notebook
+    environment:
+      - JUPYTER_ENABLE_LAB="yes"
+    deploy:
+      labels:
+        - "traefik.enable=true"
+        # Get the data from port xxxx instead of port 80
+        - "traefik.http.services.jupyter.loadbalancer.server.port=8008"
+        # Get the routes from http
+        - "traefik.http.routers.jupyter.rule=Host(`$DOMAIN`) && PathPrefix(`/lab`)"
+        - "traefik.http.routers.jupyter.entrypoints=web"
+        # Redirect these routes to https
+        - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
+        - "traefik.http.routers.jupyter.middlewares=redirect-to-https@docker"
+        # Get the routes from https
+        - "traefik.http.routers.jupyter-secured.rule=Host(`$DOMAIN`) && PathPrefix(`/lab`)"
+        - "traefik.http.routers.jupyter-secured.entrypoints=web-secured"       
+    <<: *notebook_volumes
+
 volumes:
   app-db-data:
+  
 
 networks:
   traefik-public:
