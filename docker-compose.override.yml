@@ -28,6 +28,7 @@ services:
       - traefik.enable=true
       - traefik.http.routers.${STACK_NAME?Variable not set}-traefik-public-http.rule=Host(`${DOMAIN?Variable not set}`)
       - traefik.http.services.${STACK_NAME?Variable not set}-traefik-public.loadbalancer.server.port=80
+      - traefik.http.middlewares.autodetect.contenttype.autodetect=true    
 
   backend:
     ports:
@@ -73,6 +74,14 @@ services:
       - traefik.constraint-label-stack=${TRAEFIK_TAG?Variable not set}
       - traefik.http.routers.${STACK_NAME?Variable not set}-notebook-http.rule=PathPrefix(`/lab`)
       - traefik.http.services.${STACK_NAME?Variable not set}-notebook.loadbalancer.server.port=8008
+      - traefik.http.middlewares.autodetect.contenttype.autodetect=true
+
+  neo:
+      # map the ports so we can check the db server is up
+      ports: 
+        - 7474:7474
+        - 7687:7687
+
 
 networks:
   traefik-public:

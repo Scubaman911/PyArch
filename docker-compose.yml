@@ -6,7 +6,7 @@ x-notebook-volumes: &notebook_volumes
 
 services:
   proxy:
-    image: traefik:v2.2
+    image: traefik:v2.4.9
     networks:
       - ${TRAEFIK_PUBLIC_NETWORK?Variable not set}
       - default
@@ -35,6 +35,7 @@ services:
       labels:
         # Enable Traefik for this service, to make it available in the public network
         - traefik.enable=true
+        - traefik.http.middlewares.autodetect.contenttype.autodetect=true
         # Use the traefik-public network (declared below)
         - traefik.docker.network=${TRAEFIK_PUBLIC_NETWORK?Variable not set}
         # Use the custom label "traefik.constraint-label=traefik-public"
@@ -43,7 +44,6 @@ services:
         # traefik-http set up only to use the middleware to redirect to https
         - traefik.http.middlewares.${STACK_NAME?Variable not set}-https-redirect.redirectscheme.scheme=https
         - traefik.http.middlewares.${STACK_NAME?Variable not set}-https-redirect.redirectscheme.permanent=true
-        - traefik.frontend.headers.contentTypeNosniff=false
         # Handle host with and without "www" to redirect to only one of them
         # Uses environment variable DOMAIN
         # To disable www redirection remove the Host() you want to discard, here and
@@ -87,6 +87,7 @@ services:
       - default
     depends_on:
       - celeryworker
+      - queue
     env_file:
       - .env
     command: ["celery", "--broker=amqp://guest:guest@queue:5672//", "flower", "--broker_api=http://guest:guest@queue:15672/api//", "--inspect_timeout=10000"]
@@ -115,6 +116,8 @@ services:
     image: '${DOCKER_IMAGE_BACKEND?Variable not set}:${TAG-latest}'
     env_file:
       - .env
+    depends_on:
+      - neo
     environment:
       - SERVER_NAME=${DOMAIN?Variable not set}
       - SERVER_HOST=https://${DOMAIN?Variable not set}
@@ -169,8 +172,18 @@ services:
         - "traefik.http.routers.jupyter-secured.entrypoints=web-secured"       
     <<: *notebook_volumes
 
+  neo:
+    # The image to use
+    image: neo4j:latest
+    # mounting a named volume to the container to track db data
+    volumes:
+        - neo4j_data:/data/
+    env_file:
+        - .env
+
 volumes:
   app-db-data:
+  neo4j_data:
   
 
 networks:

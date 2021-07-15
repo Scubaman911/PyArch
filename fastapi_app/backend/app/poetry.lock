@@ -367,6 +367,17 @@ optional = false
 python-versions = ">=3.5"
 
 [[package]]
+name = "neo4j"
+version = "4.3.3"
+description = "Neo4j Bolt driver for Python"
+category = "main"
+optional = false
+python-versions = ">=3.5"
+
+[package.dependencies]
+pytz = "*"
+
+[[package]]
 name = "packaging"
 version = "21.0"
 description = "Core utilities for Python packages"
@@ -678,7 +689,7 @@ testing = ["pytest (>=4.6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytes
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7"
-content-hash = "0394362679948e3a2b42474031c689b967b4adb642ddbf1ec423237584e090ae"
+content-hash = "bfecee03924e68f0e7d3a1fb4c505cc4c23cfdd1d3739418b8f31c7fbc1bc3f3"
 
 [metadata.files]
 amqp = [
@@ -934,6 +945,9 @@ mccabe = [
 more-itertools = [
     {file = "more-itertools-8.8.0.tar.gz", hash = "sha256:83f0308e05477c68f56ea3a888172c78ed5d5b3c282addb67508e7ba6c8f813a"},
     {file = "more_itertools-8.8.0-py3-none-any.whl", hash = "sha256:2cf89ec599962f2ddc4d568a05defc40e0a587fbc10d5989713638864c36be4d"},
+]
+neo4j = [
+    {file = "neo4j-4.3.3.tar.gz", hash = "sha256:7e451a65c3bcb8378dcdd665aa1d901ebfcf84ac7dc33761089ca40c29150ae7"},
 ]
 packaging = [
     {file = "packaging-21.0-py3-none-any.whl", hash = "sha256:c86254f9220d55e31cc94d69bade760f0847da8000def4dfe1c6b872fd14ff14"},
