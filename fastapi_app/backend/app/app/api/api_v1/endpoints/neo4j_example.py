@@ -6,6 +6,7 @@ from neo4j.exceptions import ServiceUnavailable
 
 router = APIRouter()
 
+
 class NeoData:
     def __init__(self, uri):
         # TODO WILL NEED AUTH!!!!
@@ -27,22 +28,23 @@ class NeoData:
     @staticmethod
     def _add_example(tx):
         query = (
-            '''CREATE (n:Person)'''
+            '''MERGE p = (andy: Person {name:'Andy'})-[:WORKS_AT]->(neo)<-[:WORKS_AT]-(michael: Person {name: 'Michael'})'''
         )
         result = tx.run(query)
 
     @staticmethod
     def _find_all(tx):
         query = (
-            '''MATCH (n:Station)
+            '''MATCH (n:Person)
             RETURN n.name AS name
             ORDER BY n.name'''
         )
         result = tx.run(query)
         try:
-            return {row["name"]:row["name"].title() for row in result}
+            return [{"name": row["name"]} for row in result]
         except ServiceUnavailable as exception:
-            logging.error("{query} raised an error: \n {exception}".format(query=query, exception=exception))
+            logging.error("{query} raised an error: \n {exception}".format(
+                query=query, exception=exception))
             raise
 
 
@@ -51,3 +53,11 @@ def add_data():
     """Adds the hardcoded example data to the db"""
     neo = NeoData("neo4j://neo:7687")
     neo.add_example_data()
+
+
+@router.get("/find-data/")
+def add_data():
+    """Gets the names of the example data 'Person' nodes in the db"""
+    neo = NeoData("neo4j://neo:7687")
+    data = neo.find_all()
+    return data
