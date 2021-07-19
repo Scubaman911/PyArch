@@ -124,36 +124,12 @@ Nevertheless, if it doesn't detect a change but a syntax error, it will just sto
 
 ### Backend tests
 
-To test the backend run:
-
-```console
-$ DOMAIN=backend sh ./scripts/test.sh
-```
-
-The file `./scripts/test.sh` has the commands to generate a testing `docker-stack.yml` file, start the stack and test it.
-
-The tests run with Pytest, modify and add tests to `./backend/app/app/tests/`.
-
-#### Local tests
-
-Start the stack with this command:
-
-```Bash
-DOMAIN=backend sh ./scripts/test-local.sh
-```
-The `./backend/app` directory is mounted as a "host volume" inside the docker container (set in the file `docker-compose.dev.volumes.yml`).
-You can rerun the test on live code:
-
-```Bash
-docker-compose exec backend /app/tests-start.sh
-```
-
 #### Test running stack
 
 If your stack is already up and you just want to run the tests, you can use:
 
 ```bash
-docker-compose exec backend /app/tests-start.sh
+docker-compose exec backend bash /app/tests-start.sh
 ```
 
 That `/app/tests-start.sh` script just calls `pytest` after making sure that the rest of the stack is running. If you need to pass extra arguments to `pytest`, you can pass them to that command and they will be forwarded.
@@ -164,15 +140,23 @@ For example, to stop on first error:
 docker-compose exec backend bash /app/tests-start.sh -x
 ```
 
+#### Test stack when not running
+
+To test the backend run:
+
+```console
+$ DOMAIN=backend sh ./scripts/test.sh
+```
+
+The file `./scripts/test.sh` has the commands to generate a testing `docker-stack.yml` file, start the stack and test it.
+
+The tests run with Pytest, modify and add tests to `./backend/app/app/tests/`.
+
+
+
 #### Test Coverage
 
 Because the test scripts forward arguments to `pytest`, you can enable test coverage HTML report generation by passing `--cov-report=html`.
-
-To run the local tests with coverage HTML reports:
-
-```Bash
-DOMAIN=backend sh ./scripts/test-local.sh --cov-report=html
-```
 
 To run the tests in a running stack with coverage HTML reports:
 
@@ -220,23 +204,6 @@ http://localhost:8888/token=f20939a41524d021fbfc62b31be8ea4dd9232913476f4397
  and then open it in your browser.
 
 You will have a full Jupyter Notebook running inside your container that has direct access to your database by the container name (`db`), etc. So, you can just run sections of your backend code directly, for example with [VS Code Python Jupyter Interactive Window](https://code.visualstudio.com/docs/python/jupyter-support-py) or [Hydrogen](https://github.com/nteract/hydrogen).
-
-
-### Development with Docker Toolbox
-
-If you are using **Docker Toolbox** in Windows or macOS instead of **Docker for Windows** or **Docker for Mac**, Docker will be running in a VirtualBox Virtual Machine, and it will have a local IP different than `127.0.0.1`, which is the IP address for `localhost` in your machine.
-
-The address of your Docker Toolbox virtual machine would probably be `192.168.99.100` (that is the default).
-
-As this is a common case, the domain `local.dockertoolbox.tiangolo.com` points to that (private) IP, just to help with development (actually `dockertoolbox.tiangolo.com` and all its subdomains point to that IP). That way, you can start the stack in Docker Toolbox, and use that domain for development. You will be able to open that URL in Chrome and it will communicate with your local Docker Toolbox directly as if it was a cloud server, including CORS (Cross Origin Resource Sharing).
-
-If you used the default CORS enabled domains while generating the project, `local.dockertoolbox.tiangolo.com` was configured to be allowed. If you didn't, you will need to add it to the list in the variable `BACKEND_CORS_ORIGINS` in the `.env` file.
-
-To configure it in your stack, follow the section **Change the development "domain"** below, using the domain `local.dockertoolbox.tiangolo.com`.
-
-After performing those steps you should be able to open: http://local.dockertoolbox.tiangolo.com and it will be server by your stack in your Docker Toolbox virtual machine.
-
-Check all the corresponding available URLs in the section at the end.
 
 ### Development in `localhost` with a custom domain
 
@@ -324,60 +291,6 @@ docker-compose up -d
 ```
 
 and check all the corresponding available URLs in the section at the end.
-
-## Frontend development
-
-* Enter the `frontend` directory, install the NPM packages and start the live server using the `npm` scripts:
-
-```bash
-cd frontend
-npm install
-npm run serve
-```
-
-Then open your browser at http://localhost:8080
-
-Notice that this live server is not running inside Docker, it is for local development, and that is the recommended workflow. Once you are happy with your frontend, you can build the frontend Docker image and start it, to test it in a production-like environment. But compiling the image at every change will not be as productive as running the local development server with live reload.
-
-Check the file `package.json` to see other available options.
-
-If you have Vue CLI installed, you can also run `vue ui` to control, configure, serve, and analyze your application using a nice local web user interface.
-
-If you are only developing the frontend (e.g. other team members are developing the backend) and there is a staging environment already deployed, you can make your local development code use that staging API instead of a full local Docker Compose stack.
-
-To do that, modify the file `./frontend/.env`, there's a section with:
-
-```
-VUE_APP_ENV=development
-# VUE_APP_ENV=staging
-```
-
-* Switch the comment, to:
-
-```
-# VUE_APP_ENV=development
-VUE_APP_ENV=staging
-```
-
-### Removing the frontend
-
-If you are developing an API-only app and want to remove the frontend, you can do it easily:
-
-* Remove the `./frontend` directory.
-* In the `docker-compose.yml` file, remove the whole service / section `frontend`.
-* In the `docker-compose.override.yml` file, remove the whole service / section `frontend`.
-
-Done, you have a frontend-less (api-only) app. 🔥 🚀
-
----
-
-If you want, you can also remove the `FRONTEND` environment variables from:
-
-* `.env`
-* `.gitlab-ci.yml`
-* `./scripts/*.sh`
-
-But it would be only to clean them up, leaving them won't really have any effect either way.
 
 ## Deployment
 
@@ -607,18 +520,6 @@ docker-auto-labels docker-stack.yml
 docker stack deploy -c docker-stack.yml --with-registry-auth "${STACK_NAME?Variable not set}"
 ```
 
-### Continuous Integration / Continuous Delivery
-
-If you use GitLab CI, the included `.gitlab-ci.yml` can automatically deploy it. You may need to update it according to your GitLab configurations.
-
-If you use any other CI / CD provider, you can base your deployment from that `.gitlab-ci.yml` file, as all the actual script steps are performed in `bash` scripts that you can easily re-use.
-
-GitLab CI is configured assuming 2 environments following GitLab flow:
-
-* `prod` (production) from the `production` branch.
-* `stag` (staging) from the `master` branch.
-
-If you need to add more environments, for example, you could imagine using a client-approved `preprod` branch, you can just copy the configurations in `.gitlab-ci.yml` for `stag` and rename the corresponding variables. The Docker Compose file and environment variables are configured to support as many environments as you need, so that you only need to modify `.gitlab-ci.yml` (or whichever CI system configuration you are using).
 
 ## Docker Compose files and env vars
 
@@ -652,15 +553,11 @@ These are the URLs that will be used and generated by the project.
 
 Production URLs, from the branch `production`.
 
-Frontend: https://fastapi_app.com
-
 Backend: https://fastapi_app.com/api/
 
 Automatic Interactive Docs (Swagger UI): https://fastapi_app.com/docs
 
 Automatic Alternative Docs (ReDoc): https://fastapi_app.com/redoc
-
-PGAdmin: https://pgadmin.fastapi_app.com
 
 Flower: https://flower.fastapi_app.com
 
@@ -668,15 +565,11 @@ Flower: https://flower.fastapi_app.com
 
 Staging URLs, from the branch `master`.
 
-Frontend: https://stag.fastapi_app.com
-
 Backend: https://stag.fastapi_app.com/api/
 
 Automatic Interactive Docs (Swagger UI): https://stag.fastapi_app.com/docs
 
 Automatic Alternative Docs (ReDoc): https://stag.fastapi_app.com/redoc
-
-PGAdmin: https://pgadmin.stag.fastapi_app.com
 
 Flower: https://flower.stag.fastapi_app.com
 
@@ -684,37 +577,15 @@ Flower: https://flower.stag.fastapi_app.com
 
 Development URLs, for local development.
 
-Frontend: http://localhost
-
 Backend: http://localhost/api/
 
 Automatic Interactive Docs (Swagger UI): https://localhost/docs
 
 Automatic Alternative Docs (ReDoc): https://localhost/redoc
 
-PGAdmin: http://localhost:5050
-
 Flower: http://localhost:5555
 
 Traefik UI: http://localhost:8090
-
-### Development with Docker Toolbox URLs
-
-Development URLs, for local development.
-
-Frontend: http://local.dockertoolbox.tiangolo.com
-
-Backend: http://local.dockertoolbox.tiangolo.com/api/
-
-Automatic Interactive Docs (Swagger UI): https://local.dockertoolbox.tiangolo.com/docs
-
-Automatic Alternative Docs (ReDoc): https://local.dockertoolbox.tiangolo.com/redoc
-
-PGAdmin: http://local.dockertoolbox.tiangolo.com:5050
-
-Flower: http://local.dockertoolbox.tiangolo.com:5555
-
-Traefik UI: http://local.dockertoolbox.tiangolo.com:8090
 
 ### Development with a custom IP URLs
 
