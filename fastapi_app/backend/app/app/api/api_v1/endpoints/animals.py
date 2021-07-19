@@ -4,7 +4,7 @@ from app.schemas import AnimalFactModel
 
 router = APIRouter()
 
-@router.post("/info/")
+@router.get("/info/", response_model=AnimalFactModel)
 def info(animal: str):
     """Returns info by animal name...it only knows kangaroo"""
     if animal == "kangaroo":
