@@ -8,7 +8,7 @@ router = APIRouter()
 
 
 @router.post("/test-celery/", status_code=201)
-def test_celery(msg: str,) -> Any:
+def test_celery(msg: str) -> Any:
     """
     Test Celery worker.
     """
