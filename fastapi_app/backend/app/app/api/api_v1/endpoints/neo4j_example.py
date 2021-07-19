@@ -1,9 +1,9 @@
 """ A Very dirty example of querying Neo, not production ready but just intended to prove basic functionality quickly."""
+import logging
+
 from fastapi import APIRouter
 from neo4j import GraphDatabase
-import logging
 from neo4j.exceptions import ServiceUnavailable
-
 
 router = APIRouter()
 
@@ -28,24 +28,23 @@ class NeoData:
 
     @staticmethod
     def _add_example(tx):
-        query = (
-            '''MERGE p = (andy: Person {name:'Andy'})-[:WORKS_AT]->(j:JOB {name: 'Neo'})<-[:WORKS_AT]-(michael: Person {name: 'Michael'})'''
-        )
-        result = tx.run(query)
+        query = """MERGE p = (andy: Person {name:'Andy'})-[:WORKS_AT]->(j:JOB {name: 'Neo'})<-[:WORKS_AT]-(michael: Person {name: 'Michael'})"""
+        tx.run(query)
 
     @staticmethod
     def _find_all(tx):
-        query = (
-            '''MATCH (n:Person)-[k:WORKS_AT]->(f)
+        query = """MATCH (n:Person)-[k:WORKS_AT]->(f)
             RETURN n.name AS name, f.name as place
-            ORDER BY n.name'''
-        )
+            ORDER BY n.name"""
         result = tx.run(query)
         try:
             return [{"name": row["name"], "workplace": row["place"]} for row in result]
         except ServiceUnavailable as exception:
-            logging.error("{query} raised an error: \n {exception}".format(
-                query=query, exception=exception))
+            logging.error(
+                "{query} raised an error: \n {exception}".format(
+                    query=query, exception=exception
+                )
+            )
             raise
 
 
