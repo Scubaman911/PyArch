@@ -25,8 +25,6 @@ class Settings(BaseSettings):
         raise ValueError(v)
 
     PROJECT_NAME: str
-    FIRST_SUPERUSER: str
-    FIRST_SUPERUSER_PASSWORD: str
 
     class Config:
         case_sensitive = True
