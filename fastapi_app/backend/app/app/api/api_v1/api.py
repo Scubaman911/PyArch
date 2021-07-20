@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from app.api.api_v1.endpoints import utils, animals, neo4j_example
+from app.api.api_v1.endpoints import animals, neo4j_example, utils
 
 api_router = APIRouter()
 api_router.include_router(utils.router, prefix="/utils", tags=["utils"])
