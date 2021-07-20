@@ -28,9 +28,6 @@ Alternative automatic documentation with ReDoc (from the OpenAPI backend): http:
 
 Flower, administration of Celery tasks: http://localhost:5555
 
-Traefik UI, to see how the routes are being handled by the proxy: http://localhost:8090
-
-
 If your Docker is not running in `localhost` (the URLs above wouldn't work) check the sections below on **Development with a custom IP**.
 
 ### Docker Compose Override
@@ -168,23 +165,6 @@ You can deploy the stack to a Docker Swarm mode cluster with a main Traefik prox
 And you can use CI (continuous integration) systems to do it automatically.
 
 But you have to configure a couple things first.
-
-### Traefik network
-
-This stack expects the public Traefik network to be named `traefik-public`, just as in the tutorials in <a href="https://dockerswarm.rocks" class="external-link" target="_blank">DockerSwarm.rocks</a>.
-
-If you need to use a different Traefik public network name, update it in the `docker-compose.yml` files, in the section:
-
-```YAML
-networks:
-  traefik-public:
-    external: true
-```
-
-Change `traefik-public` to the name of the used Traefik network. And then update it in the file `.env`:
-
-```bash
-TRAEFIK_PUBLIC_NETWORK=traefik-public
 ```
 
 ### Persisting Docker named volumes
@@ -337,7 +317,6 @@ TAG=prod FRONTEND_ENV=production bash ./scripts/build-push.sh
 
 * Set these environment variables:
   * `DOMAIN=fastapi_app.com`
-  * `TRAEFIK_TAG=fastapi_app.com`
   * `STACK_NAME=fastapi_app-com`
   * `TAG=prod`
 * Use the provided `scripts/deploy.sh` file with those environment variables:

@@ -14,9 +14,6 @@ services:
   
   flower:
     image: mher/flower
-    networks:
-      - ${TRAEFIK_PUBLIC_NETWORK?Variable not set}
-      - default
     depends_on:
       - celeryworker
       - queue
