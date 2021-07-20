@@ -7,7 +7,6 @@ authors = ["Admin <admin@example.com>"]
 [tool.poetry.dependencies]
 python = "^3.7"
 uvicorn = "^0.11.3"
-fastapi = "^0.54.1"
 requests = "^2.23.0"
 celery = "^4.4.2"
 passlib = {extras = ["bcrypt"], version = "^1.7.2"}
@@ -18,6 +17,7 @@ psycopg2-binary = "^2.8.5"
 pytest = "^5.4.1"
 neo4j = "^4.3.3"
 mypy = "^0.910"
+fastapi = "^0.66.1"
 
 [tool.poetry.dev-dependencies]
 black = "^19.10b0"
