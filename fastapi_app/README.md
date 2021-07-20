@@ -1,43 +1,5 @@
 # fastapi_app
 
-
-
-## Backend local development
-
-* Start the stack with Docker Compose:
-
-```bash
-docker-compose up -d
-```
-
-* Now you can open your browser and interact with these URLs:
-
-Backend, JSON based web API based on OpenAPI: http://localhost/api/
-
-Automatic interactive documentation with Swagger UI (from the OpenAPI backend): http://localhost/docs
-
-Alternative automatic documentation with ReDoc (from the OpenAPI backend): http://localhost/redoc
-
-Flower, administration of Celery tasks: http://localhost:5555
-
-Traefik UI, to see how the routes are being handled by the proxy: http://localhost:8090
-
-**Note**: The first time you start your stack, it might take a minute for it to be ready. While the backend waits for the database to be ready and configures everything. You can check the logs to monitor it.
-
-To check the logs, run:
-
-```bash
-docker-compose logs
-```
-
-To check the logs of a specific service, add the name of the service, e.g.:
-
-```bash
-docker-compose logs backend
-```
-
-If your Docker is not running in `localhost` (the URLs above wouldn't work) check the sections below on **Development with Docker Toolbox** and **Development with a custom IP**.
-
 ## Backend local development, additional details
 
 ### General workflow
