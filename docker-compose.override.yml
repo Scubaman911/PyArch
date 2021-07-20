@@ -2,34 +2,6 @@ version: "3.6"
 
 services:
 
-  proxy:
-    ports:
-      - "80:80"
-      - "8090:8080"
-    command:
-      # Enable Docker in Traefik, so that it reads labels from Docker services
-      - --providers.docker
-      # Add a constraint to only use services with the label for this stack
-      # from the env var TRAEFIK_TAG
-      - --providers.docker.constraints=Label(`traefik.constraint-label-stack`, `${TRAEFIK_TAG?Variable not set}`)
-      # Do not expose all Docker services, only the ones explicitly exposed
-      - --providers.docker.exposedbydefault=false
-      # Disable Docker Swarm mode for local development
-      # - --providers.docker.swarmmode
-      # Enable the access log, with HTTP requests
-      - --accesslog
-      # Enable the Traefik log, for configurations and errors
-      - --log
-      # Enable the Dashboard and API
-      - --api
-      # Enable the Dashboard and API in insecure mode for local development
-      - --api.insecure=true
-    labels:
-      - traefik.enable=true
-      - traefik.http.routers.${STACK_NAME?Variable not set}-traefik-public-http.rule=Host(`${DOMAIN?Variable not set}`)
-      - traefik.http.services.${STACK_NAME?Variable not set}-traefik-public.loadbalancer.server.port=80
-      - traefik.http.middlewares.autodetect.contenttype.autodetect=true    
-
   backend:
     ports:
       - "8888:8888"
@@ -45,11 +17,6 @@ services:
         INSTALL_DEV: ${INSTALL_DEV-true}
     # command: bash -c "while true; do sleep 1; done"  # Infinite loop to keep container live doing nothing
     command: /start-reload.sh
-    labels:
-      - traefik.enable=true
-      - traefik.constraint-label-stack=${TRAEFIK_TAG?Variable not set}
-      - traefik.http.routers.${STACK_NAME?Variable not set}-backend-http.rule=PathPrefix(`/api`) || PathPrefix(`/docs`) || PathPrefix(`/redoc`)
-      - traefik.http.services.${STACK_NAME?Variable not set}-backend.loadbalancer.server.port=80
 
   celeryworker:
     volumes:
@@ -67,21 +34,9 @@ services:
   pyspark-notebook:
     ports:
       - "8008:8008"
-    labels:
-      - traefik.enable=true
-      - traefik.constraint-label-stack=${TRAEFIK_TAG?Variable not set}
-      - traefik.http.routers.${STACK_NAME?Variable not set}-notebook-http.rule=PathPrefix(`/lab`)
-      - traefik.http.services.${STACK_NAME?Variable not set}-notebook.loadbalancer.server.port=8008
-      - traefik.http.middlewares.autodetect.contenttype.autodetect=true
 
   neo:
       # map the ports so we can check the db server is up
       ports: 
         - 7474:7474
         - 7687:7687
-
-
-networks:
-  traefik-public:
-    # For local dev, don't expect an external Traefik network
-    external: false
