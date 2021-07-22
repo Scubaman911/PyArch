@@ -18,13 +18,13 @@ docker-compose up
 
 * Now you can open your browser and interact with these URLs:
 
-Backend microservice, JSON based web API based on OpenAPI: http://localhost/api/
+Backend microservice, JSON based web API based on OpenAPI: http://localhost:8888/api/
 
 JupyterLab, web-based interface for interacting with Jupyter: http://localhost:8008/lab
 
-Automatic interactive documentation with Swagger UI (from the OpenAPI backend): http://localhost/docs
+Automatic interactive documentation with Swagger UI (from the OpenAPI backend): http://localhost:8888/docs
 
-Alternative automatic documentation with ReDoc (from the OpenAPI backend): http://localhost/redoc
+Alternative automatic documentation with ReDoc (from the OpenAPI backend): http://localhost:8888/redoc
 
 Flower, administration of Celery tasks: http://localhost:5555
 
